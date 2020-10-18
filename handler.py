@@ -21,6 +21,3 @@ def generate_report(event, context):
         "body": "success",
     }
 
-
-if __name__ == "__main__":
-    main()
