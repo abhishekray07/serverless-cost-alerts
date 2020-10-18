@@ -1,0 +1,47 @@
+org: abhishekray07
+app: serverless-cost-alerts
+service: serverless-cost-alerts
+
+plugins:
+  - serverless-python-requirements
+
+package:
+  excludeDevDependencies: true
+  exclude:
+    - node_modules/**
+
+custom:
+  pythonRequirements:
+    slim: true
+    strip: false
+    slimPatternsAppendDefaults: true
+    slimPatterns:
+      - "**/*.egg-info*"
+      - "**/*.dist-info*"
+    dockerizePip: true
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: dev
+  region: us-west-2
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - ses:SendEmail
+      Resource:
+        - "*"
+    - Effect: Allow
+      Action:
+        - ce:GetCostAndUsage
+      Resource:
+        - "*"
+
+functions:
+  send_daily_cost_report:
+    # handler: handler.generate_report
+    # events:
+    #   - http: GET hello
+    handler: handler.send_cost_report
+    events:
+      - schedule: cron(0 23 * * ? *)
